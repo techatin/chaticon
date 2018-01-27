@@ -29,7 +29,6 @@ $(document).ready(function(){
 	});
 });
 
-// Formats the date as HH:MM (12 hour format)
 function formatAMPM(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -41,22 +40,31 @@ function formatAMPM(date) {
     return strTime;
 }            
 
-// No use time. It is a javaScript effect.
+//-- No use time. It is a javaScript effect.
 function insertChat(who, text, time = 0){
     var control = "";
     var date = formatAMPM(new Date());
     
     if (who == this_user) {
-        control = '<div class="message-me"> +
-        			'<h4>' + this_user + '</h4>' +
-					'<p>' + text + '</p>' + 
-					'<hr />'
-				  '</div>'
+        control = '<div class="message-me>' +
+                        '<h4>You</h4>' +
+					    '<div>' +
+						    '<p style="float:left">' + text + '</p>' +
+						    '<p style="float:right"><small>' + date + '</small></p>' +
+					    '</div>' +
+					    '<hr>' +
+			        '</div>';
     }
+    
     else {
-        control = '<h4>' + who + '</h4>' +
-					'<p>' + text + '</p>' + 
-					'<hr />'
+        control = '<div class="message-other">' +
+                        '<h4>Not You</h4>' +
+					    '<div>' +
+						    '<p style="float:left">' + text + '</p>' +
+						    '<p style="float:right"><small>' + date + '</small></p>' +
+					    '</div>' +
+					    '<hr>' +
+				    '</div>';
     }
     setTimeout(
         function(){                        
@@ -72,13 +80,7 @@ $(document).ready(function(){
 			insertChat("me", text);              
 			$("#message-send-text").val('');
 		}
-		
-		//Emit message to server
-		socket.emit('message', {by: $('#username_data').val(), room: $('#room_name').val(), body: $('#room_data').val()});
-		
 	});
-	
-	// Send button
 	$("#message-send-text").on("keyup", function(e){
 		if (e.which == 13){
 			var text = $(this).val();
