@@ -23,48 +23,29 @@ $(document).ready(function(){
 	});
 });
 
-function formatAMPM(date) {
-    var hours = date.getHours();
-    var minutes = date.getMinutes();
-    var ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-}            
-
 //-- No use time. It is a javaScript effect.
 function insertChat(who, text, time = 0){
     var control = "";
-    var date = formatAMPM(new Date());
     
     if (who == this_user) {
         control = '<div class="message-me>' +
-                        '<h4>You</h4>' +
-					    '<div>' +
-						    '<p style="float:left">' + text + '</p>' +
-						    '<p style="float:right"><small>' + date + '</small></p>' +
-					    '</div>' +
-					    '<hr>' +
+                        '<h4>' + this_user + '</h4>' +
+						'<p>' + text + '</p>' +
 			        '</div>';
     }
     
     else {
         control = '<div class="message-other">' +
-                        '<h4>Not You</h4>' +
-					    '<div>' +
-						    '<p style="float:left">' + text + '</p>' +
-						    '<p style="float:right"><small>' + date + '</small></p>' +
-					    '</div>' +
-					    '<hr>' +
+                        '<h4>' + other_user + '</h4>' +
+					    '<p>' + text + '</p>' +
 				    '</div>';
     }
+    
     setTimeout(
         function(){                        
-            $(".message-display").append(control);
+            $("#message-display").append(control);
         }, time);
-    
+    }
 }
 
 $(document).ready(function(){
