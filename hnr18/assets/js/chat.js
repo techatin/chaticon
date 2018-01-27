@@ -3,12 +3,6 @@ var other_user;
 var winning_emotion;
 
 $(document).ready(function(){
-	// Resize window
-	var width = $(window).width();
-	var height = $(window).height();
-	$(".frame").width(width / 2);
-	$(".frame").height(height);
-	
 	// Connect to socket
 	var socket = io.connect('http://techatin.pythonanywhere.com/api');
 	socket.emit('get_username');
