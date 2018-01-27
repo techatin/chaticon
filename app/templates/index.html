@@ -29,6 +29,7 @@
             // section of the page.
             socket.on('my_response', function(msg) {
                 $('#log').html('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                console.log(Object.keys(msg));
             });
             socket.on('error', function(msg) {
                 // console.log('error detected');
@@ -37,8 +38,12 @@
             socket.on('message', function(msg) {
                 // console.log('error detected');
                 // alert("incoming message");
-                $('#msg').html('<br>' + $('<div/>').text('Hi: ' + msg.text).html());
+                $('#msg').html('<br>' + $('<div/>').text(msg.other_user + ' said: ' + msg.text).html());
+                console.log(msg.other_user)
                 console.log(msg.text);
+            });
+            socket.on('game_over', function(msg) {
+                $('#log').html('<br>' + $('<div/>').text(msg.winner + ' won!').html());
             });
             // Interval function that tests message latency by sending a "ping"
             // message. The server then responds with a "pong" message and the
