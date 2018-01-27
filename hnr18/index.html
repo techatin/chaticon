@@ -1,0 +1,96 @@
+
+<!doctype html>
+<html lang="en" ng-app="application">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gug Chat</title>
+    <link rel="stylesheet" href="assets/css/foundation.css">
+    <link href="assets/css/app.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/docs.css" rel="stylesheet" type="text/css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css" rel="stylesheet">
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/routes.js"></script>
+    <script src="assets/js/angular.js"></script>
+    <script src="assets/js/webcam.js"></script>
+    <script src="assets/js/vendor/jquery.js"></script>
+    <script src="assets/js/vendor/what-input.js"></script>
+    <script src="assets/js/vendor/foundation.js"></script>
+
+    <!-- my own css -->
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans+Narrow" rel="stylesheet">
+    <link href="assets/css/main.css" rel="stylesheet" type="text/css">
+  </head>
+
+  <style>
+    .message-input, .message-input .inline-label, .menu-bar {margin-bottom: 0;}
+    .message-side-bar {border-left: 1px solid #eee;}
+    .avatar-section {border-top: 1px solid #eee;}
+  </style>
+
+  <body onload="init();">
+    <div class="grid-frame">
+
+      <div class="grid-block medium-12 large-12 horizontal">
+        <div class="grid-block small-6 medium-6 vertical" id="left-bar">
+        	<div class="grid-block vertical" id="face-area">
+				<video onclick="snapshot(this);" width="600" height="300" id="video" controls autoplay></video>
+				<canvas id = "myCanvas" width="400" height="300" style= "display: none";></canvas>
+        	</div>
+        	<div class="grid-block vertical" id="emotion-block">
+        		<h2>Emotions</h2>
+				<ul id="scores">
+				<!-- Will populate list with response content -->
+				</ul>
+        	</div>
+        </div>
+        <div class="grid-block small-6 medium-6" id="chat-window">
+          <div class="grid-block  vertical">
+            <div class="grid-content">
+              	<div class="message-me">
+				       <h4>Gugatron 5000</h4>
+				       Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat nisl ut dapibus. Mauris iaculis porttitor posuere. Praesent id metus massa, ut blandit odio. Proin quis tortor orci. Etiam at risus et justo dignissim congue.
+				</div>
+				<div class="message-other">
+				       <h4>Jianzhi</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-other">
+				       <h4>Jianzhi</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-other">
+				       <h4>Jianzhi</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-me">
+				       <h4>Gugatron 5000</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-me">
+				       <h4>Gugatron 5000</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-other">
+				       <h4>Jianzhi</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+				<div class="message-me">
+				       <h4>Gugatron 5000</h4>
+				       Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor. Ut in nulla enim. Phasellus molestie magna non est bibendum non venenatis nisl tempor. Suspendisse dictum feugiat.
+				</div>
+            </div>
+            <div class="message-input grid-content collapse shrink">
+              <span class="inline-label">
+                <input type="text" placeholder="Message">
+                <a href="#" class="button">Send</a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- ui-view  -->

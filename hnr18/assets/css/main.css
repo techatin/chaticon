@@ -1,0 +1,44 @@
+body {
+	background-image: url('../../assets/images/stardust.png');
+}
+
+#chat-window, #chat-window > .grid-block > .grid-content > div > h4, #emotion-block > div > h4 {
+	font-family: "PT Sans Narrow", sans-serif;
+	color: white !important;
+}
+
+#chat-window > .grid-block > .grid-content > div {
+	margin-bottom: 20px;
+}
+
+.message-me, .message-other {
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.message-me {
+	opacity: 0.75;
+	border-right: 1px solid #eee;
+}
+
+.message-other {
+	border-left: 1px solid #eee;
+}
+
+#face-area {
+	margin: 20px;
+	height: 50%;
+}
+
+#left-bar {
+	height: 100%;
+}
+
+.grid-frame {
+	padding: 20px;
+}
+
+.stat > .progress {
+	height: 50px;
+	width: 100px;
+}

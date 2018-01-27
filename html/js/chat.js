@@ -1,13 +1,35 @@
-var me = {};
-var you = {};
+var this_user;
+var other_user;
+var winning_emotion;
 
 $(document).ready(function(){
+	// Resize window
 	var width = $(window).width();
 	var height = $(window).height();
 	$(".frame").width(width / 2);
 	$(".frame").height(height);
+	
+	// Connect to socket
+	var socket = io.connect('http://techatin.pythonanywhere.com/api');
+	socket.emit('get_username');
+	
+	// Server returns this user's username
+	socket.on('answer_username', function(msg) {
+		this_user = msg.username;
+		socket.emit('user_ready');
+	});
+	
+	// Both users have connected, send winning emotion
+	socket.on('start_game', function(msg) {
+		winning_emotion = msg.data[this_user];
+	});
+	
+	socket.on('message', function(msg) {
+		insertChat(msg.other_user, msg.text);
+	});
 });
 
+// Formats the date as HH:MM (12 hour format)
 function formatAMPM(date) {
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -19,18 +41,18 @@ function formatAMPM(date) {
     return strTime;
 }            
 
-//-- No use time. It is a javaScript effect.
+// No use time. It is a javaScript effect.
 function insertChat(who, text, time = 0){
     var control = "";
     var date = formatAMPM(new Date());
     
-    if (who == "me"){
-        control = '<h4>You</h4>' +
+    if (who == this_user) {
+        control = '<h4>' + this_user + '</h4>' +
 					'<p>' + text + '</p>' + 
 					'<hr />'            
     }
-    else{
-        control = '<h4>Not You</h4>' +
+    else {
+        control = '<h4>' + who + '</h4>' +
 					'<p>' + text + '</p>' + 
 					'<hr />'
     }
@@ -48,7 +70,13 @@ $(document).ready(function(){
 			insertChat("me", text);              
 			$("#message-send-text").val('');
 		}
+		
+		//Emit message to server
+		socket.emit('message', {by: $('#username_data').val(), room: $('#room_name').val(), body: $('#room_data').val()});
+		
 	});
+	
+	// Send button
 	$("#message-send-text").on("keyup", function(e){
 		if (e.which == 13){
 			var text = $(this).val();
