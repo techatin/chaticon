@@ -1,0 +1,6 @@
+.frame{
+    height:450px;
+    overflow:hidden;
+    display:flex;
+    padding:0;
+}

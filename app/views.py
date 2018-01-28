@@ -1,6 +1,6 @@
 from . import app, socketio, connected_user, code_used, room_numbers
 from . import room_losing_condition
-from flask import render_template, session
+from flask import render_template, session, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_socketio import close_room
 import json
@@ -15,19 +15,36 @@ emotions = [
 
 @app.route('/')
 def index():
-    return render_template('index.html', async_mode=socketio.async_mode)
+    return render_template('rooms.html', async_mode=socketio.async_mode)
+
+
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
 
 
 @app.route('/api/create_room', methods=['POST'])
 def create_room():
-    data = {'room_number': room_numbers[-1] + 1}
+    data = {'room_number': str(room_numbers[-1] + 1)}
     room_numbers.append(room_numbers[-1] + 1)
     return json.dumps(data)
 
 
 @socketio.on('get_username', namespace='/api')
 def get_username():
+    print(session)
+    print("Checking if this exists " + str(session['room']))
+    print("Getting user name " + session['username'])
+    socketio.sleep(0)
     emit('answer_username', {'username': session['username']})
+    socketio.sleep(0)
+    emit('hi', broadcast=True, room=session['room'], namespace='/api', skip_sid=None)
+
+
+@app.route('/intermediate', methods=['POST'])
+def intermediate():
+    print("Triggered")
+    return redirect(url_for('chat'))
 
 
 @socketio.on('join', namespace='/api')
@@ -35,14 +52,12 @@ def on_join(data):
     print(rooms())
 
     username = data['username']
-    room_code = int(data['room'])
+    room_code = str(data['room'])
 
     people_inside = connected_user.get(room_code, [])
     num_people = len(people_inside)
 
-    print(session.get('username', []))
-
-    if (room_code not in room_numbers):
+    if (int(room_code) not in room_numbers):
         emit('error', {"error_message": "Room does not exist yet."})
 
     if (num_people == 2):
@@ -56,13 +71,18 @@ def on_join(data):
 
     session['username'] = username
     session['room'] = room_code
+    print(session['username'])
 
     join_room(room_code)
     people_inside.append(username)
     connected_user[room_code] = people_inside
     num_people += 1
 
+    print(list(socketio.server.manager.get_participants('/api', room_code)))
+
     print('room joined')
+    emit('can_enter')
+    emit('hi', room=room_code, skip_sid=None)
 
     # if (num_people == 2):
     #     # tells client that the room is ready
@@ -89,8 +109,8 @@ def on_join(data):
 @socketio.on('user_ready', namespace='/api')
 def user_ready():
 
-    username = data['username']
-    room_code = int(data['room'])
+    username = session['username']
+    room_code = str(session['room'])
 
     people_inside = connected_user.get(room_code, [])
     num_people = len(people_inside)
@@ -114,7 +134,14 @@ def user_ready():
         room_losing_condition[room_code] = losing_condition
 
         print(json_data)
-        emit('start_game', {'count': 0, 'data': json_data}, room=room_code)
+        print(type(room_code))
+        emit(
+            'start_game',
+            {'count': 0, 'data': {
+                people_inside[0]: emotion_a,
+                people_inside[1]: emotion_b
+            }},
+            room=room_code, broadcast=True, skip_sid=None)
 
 
 @socketio.on('leave', namespace='/api')
@@ -151,11 +178,13 @@ def on_leave(data):
         connected_user[room_code] = []
 
 
-@socketio.on('message', namespace='/api')
+@socketio.on('message_event', namespace='/api')
 def on_message(data):
     message_data = data['body']
     room_code = session['room']
     people_inside = connected_user.get(room_code, [])
+
+    print(room_code in socketio.server.manager.rooms['/api'])
 
     print(session['username'])
 
@@ -168,12 +197,13 @@ def on_message(data):
     print("message!")
     print(room_code)
     emit(
-        'message', {
+        'get_message', {
             'other_user': session['username'],
             'text': message_data
         },
         room=room_code,
-        include_self=False)
+        include_self=False,
+        namespace="/api", skip_sid=None)
     print("emitted")
 
 
@@ -197,4 +227,37 @@ def on_emotion(data):
         emit(
             'game_over',
             {'winner': [i for i in people_inside if i != user][0]},
-            room=room_code)
+            room=room_code, skip_sid=None)
+
+
+"""
+{
+    '/': {
+        None: {
+            '3435d38049164527a892b3ce049ca830': True,
+            '18b2380df922415a8a3f5044520b8edf': True
+        },
+        '3435d38049164527a892b3ce049ca830': {
+            '3435d38049164527a892b3ce049ca830': True
+        },
+        '18b2380df922415a8a3f5044520b8edf': {
+            '18b2380df922415a8a3f5044520b8edf': True
+        }
+    },
+    '/api': {
+        None: {
+            '3435d38049164527a892b3ce049ca830': True,
+            '18b2380df922415a8a3f5044520b8edf': True
+        },
+        '3435d38049164527a892b3ce049ca830': {
+            '3435d38049164527a892b3ce049ca830': True
+        },
+        '18b2380df922415a8a3f5044520b8edf': {
+            '18b2380df922415a8a3f5044520b8edf': True
+        },
+        '100001': {
+            '18b2380df922415a8a3f5044520b8edf': True
+        }
+    }
+}
+"""

@@ -1,0 +1,47 @@
+
+
+  <body onload="initWebcam();">
+    <div class="grid-frame">
+
+      <div class="grid-block medium-12 large-12 horizontal">
+        <div class="grid-block small-6 medium-6 vertical" id="left-bar">
+        	<div class="grid-block vertical" id="face-area">
+				<video onclick="snapshot(this);" width="600" height="300" id="video" controls autoplay></video>
+				<canvas id = "myCanvas" width="400" height="300" style= "display: none";></canvas>
+        	</div>
+        	<div class="grid-block vertical" id="emotion-block">
+        		<h2 style="color:white !important;">Emotions</h2>
+				<dl style="width: 500px;color:white;" id="scores">
+				<!-- Will populate list with response content -->
+                </dl>
+        	</div>
+        </div>
+
+        <div class="row pop-up">
+          <div class="box small-6 large-centered">
+            <a href="#" class="close-button">&#10006;</a>
+            <h3>Chaticon</h3>
+            <p>You WIN!!!</p>
+            <div id="chartContainer" style="height: 200px; width: 90%; display:block; margin-left:auto; margin-right:auto;"></div>
+            <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+            <a href="#" class="button">Continue Chatting!</a>
+          </div>
+        </div>
+
+        <div class="grid-block small-6 medium-6" id="chat-window">
+          <div class="grid-block  vertical">
+            <div id="message-display" class="grid-content"></div>
+            <div class="message-input grid-content collapse shrink">
+              <span class="inline-label">
+                <input type="text" id="send-message-text" placeholder="Message">
+                <button id="send-message-button" class="button">Send</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+<!-- ui-view  -->

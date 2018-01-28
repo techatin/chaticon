@@ -10,6 +10,7 @@ $(document).ready(function(){
 	// Server returns this user's username
 	socket.on('answer_username', function(msg) {
 		this_user = msg.username;
+		alert(this_user);
 		socket.emit('user_ready');
 	});
 
