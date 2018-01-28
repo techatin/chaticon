@@ -1,7 +1,9 @@
 navigator.getUserMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
+var game_start_time = new Date('2018-01-01');
 var video;
 var webcamStream;
+var game_over = false;
 
 var arrhappy = [];
 
@@ -40,6 +42,9 @@ function stopWebcam(){
 //This code takes a snapshot
 var canvas, ctx;
 function initWebcam(){
+	var socket = io.connect('http://techatin.pythonanywhere.com/api');
+
+
 	console.log('hi');
 	//Get the canvas and obtain a context for drawing in it
 	canvas = document.getElementById("myCanvas");
@@ -149,7 +154,7 @@ function getemo(imageurl) {
 		for(var prop in scores) {
 			if(prop == "neutral")continue;
 			percentage = Math.round(scores[prop]*100);
-			scoresList.append("<div><div class=\"barcc\"> " + prop + "</div><div class=\"barc\" style=\"width: " + percentage*0.8 + "%\">" + percentage + "%</div></div>");
+			scoresList.append("<div><div class=\"barcc\"> " + prop + "</div><div class=\"barc\" style=\"font-family: \'PT Sans Narrow\', sans-serif; width: " + percentage*0.8 + "%\">" + percentage + "%</div></div>");
 			//scoresList.append("<li> " + prop + ": " + scores[prop] + "</li>")
 			if(maxScore<scores[prop]){
 				maxScore = scores[prop];
@@ -162,7 +167,19 @@ function getemo(imageurl) {
 				}
 			}
 		}
-		var socket = io.connect('http://localhost:5000/api');
+
+		var socket = io.connect('http://techatin.pythonanywhere.com/api');
+		if (game_start_time.getTime() == new Date('2018-01-01').getTime() || new Date($.now()).getTime() - game_start_time.getTime() < 10000) {
+			console.log("Emotion data not sent: too early");
+			console.log(game_start_time.getTime());
+			return;
+		}
+
+		if (game_over) {
+			console.log("Emotion data not sent: game is over");
+			return;
+		}
+
 		socket.emit('emotion', {body: maxProp});
 		// console.log(arrhappy);
 	}).fail(function(err) {

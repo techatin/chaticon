@@ -16,5 +16,6 @@ connected_user = {}
 code_used = {}
 room_numbers = [100000]
 room_losing_condition = {}
+room_game_over = {};
 
 from app import views

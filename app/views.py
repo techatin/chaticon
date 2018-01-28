@@ -1,5 +1,5 @@
 from . import app, socketio, connected_user, code_used, room_numbers
-from . import room_losing_condition
+from . import room_losing_condition, room_game_over
 from flask import render_template, session, redirect, url_for
 from flask_socketio import SocketIO, emit, join_room, leave_room, rooms
 from flask_socketio import close_room
@@ -26,6 +26,7 @@ def chat():
 @app.route('/api/create_room', methods=['POST'])
 def create_room():
     data = {'room_number': str(room_numbers[-1] + 1)}
+    room_game_over[str(room_numbers[-1] + 1)] = False
     room_numbers.append(room_numbers[-1] + 1)
     return json.dumps(data)
 
@@ -220,10 +221,18 @@ def on_emotion(data):
             {'error_message': 'The other player has not joined yet!'})
         return
 
+    if (room_game_over[room_code]):
+        emit(
+            'error',
+            {'error_message': 'Game is over.'}
+        )
+        return
+
     # Check if the emotion detected is the winning condition
     # for the other player
 
     if (emotion_data == room_losing_condition[room_code][user]):
+        room_game_over[room_code] = True
         emit(
             'game_over',
             {'winner': [i for i in people_inside if i != user][0]},

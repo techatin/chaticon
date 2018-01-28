@@ -59,3 +59,8 @@ body {
 	background-color: #ff7617 !important;
 	border-radius: 2px !important;
 }
+
+.input-marginless {
+	padding-left:0;
+	padding-right:0;
+}

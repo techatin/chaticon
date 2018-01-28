@@ -1,7 +1,7 @@
 var foundationRoutes = [{"name":"settings","url":"/settings","animationIn":"slideFromLeft","animationOut":"slideFromLeft","path":"templates/settings.html"},{"name":"home","url":"/","path":"templates/home.html"}];
 
 $(document).ready(function() {
-    var socket = io.connect('http://localhost:5000/api');
+    var socket = io.connect('http://techatin.pythonanywhere.com/api');
 
     $("#create-room").click(function() {
         console.log("hi");
@@ -10,14 +10,14 @@ $(document).ready(function() {
         console.log('hi1');
 
         console.log('hi2');
-        $.post('http://localhost:5000/api/create_room', function(data) {
+        $.post('http://techatin.pythonanywhere.com/api/create_room', function(data) {
             var json = JSON.parse(data);
             console.log("Room number is: " + json['room_number'].toString());
             alert("Room number is: " + json['room_number'].toString());
             room_number = json['room_number'];
             socket.emit('join', {"room" : room_number, "username" : nickname}, function() {
                 $(document).empty();
-                $.get('http://localhost:5000/chat', function(data) {
+                $.get('http://techatin.pythonanywhere.com/chat', function(data) {
                     console.log(data);
                     $('body').html(data);
                     initWebcam();
@@ -35,12 +35,8 @@ $(document).ready(function() {
                 		}
                 	});
                 	$("#send-message-text").on("keyup", function(e){
-                		if (e.which === 13){
-                			var text = $(this).val();
-                			if (text !== ""){
-                				insertChat(this_user, text);
-                				$(this).val('');
-                			}
+                        if (e.which === 13){
+                			$("#send-message-button").click();
                 		}
                 	});
                     // return ;
@@ -68,7 +64,7 @@ $(document).ready(function() {
         console.log('hi');
         socket.emit('join', {"room" : room_number, "username" : nickname}, function() {
             $(document).empty();
-            $.get('http://localhost:5000/chat', function(data) {
+            $.get('http://techatin.pythonanywhere.com/chat', function(data) {
                 console.log(data);
                 $('body').html(data);
                 initWebcam();
@@ -87,11 +83,7 @@ $(document).ready(function() {
             	});
             	$("#send-message-text").on("keyup", function(e){
             		if (e.which === 13){
-            			var text = $(this).val();
-            			if (text !== ""){
-            				insertChat(this_user, text);
-            				$(this).val('');
-            			}
+            			$("#send-message-button").click();
             		}
             	});
                 // return ;
@@ -102,6 +94,14 @@ $(document).ready(function() {
 	/* socket.on('hi', function(msg) {
 		alert('hi');
 	}) */
+
+    socket.on('start_game', function() {
+
+	});
+
+	socket.on('game_over', function() {
+
+	});
 
 	// Server returns this user's username
 	socket.on('answer_username', function(msg) {
@@ -115,12 +115,17 @@ $(document).ready(function() {
         console.log(msg);
 		console.log('Game is starting');
 		winning_emotion = msg.data[this_user];
-        alert("Make the other player " + winning_emotion + "!!!!");
+        alert("Make the other player's emotion " + winning_emotion + "!");
+
+        game_start_time = new Date($.now());
+		console.log(game_start_time.getTime());
     });
 
 	socket.on('get_message', function(msg) {
 		console.log('message received');
+        console.log(msg.other_user);
 		if(msg.other_user !== this_user) {
+            console.log(msg.other_user);
 			insertChat(msg.other_user, msg.text);
 		}
 	});
@@ -134,9 +139,9 @@ $(document).ready(function() {
         else{
             alert('You won.');
             console.log("HALLO");
-            $('.pop-up').fadeIn(1000);
             console.log("HUAIJIN");
         }
+        game_over = true;
     });
 });
 
