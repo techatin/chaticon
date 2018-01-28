@@ -42,7 +42,7 @@ function stopWebcam(){
 //This code takes a snapshot
 var canvas, ctx;
 function initWebcam(){
-	var socket = io.connect('http://techatin.pythonanywhere.com/api');
+	var socket = io.connect(domain + '/api');
 
 
 	console.log('hi');
@@ -168,7 +168,7 @@ function getemo(imageurl) {
 			}
 		}
 
-		var socket = io.connect('http://techatin.pythonanywhere.com/api');
+		var socket = io.connect(domain + '/api');
 		if (game_start_time.getTime() == new Date('2018-01-01').getTime() || new Date($.now()).getTime() - game_start_time.getTime() < 10000) {
 			console.log("Emotion data not sent: too early");
 			console.log(game_start_time.getTime());

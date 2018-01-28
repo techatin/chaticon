@@ -1,23 +1,26 @@
 var foundationRoutes = [{"name":"settings","url":"/settings","animationIn":"slideFromLeft","animationOut":"slideFromLeft","path":"templates/settings.html"},{"name":"home","url":"/","path":"templates/home.html"}];
+var domain;
 
 $(document).ready(function() {
-    var socket = io.connect('http://techatin.pythonanywhere.com/api');
+    var domain = 'http://yjauyknsrz.localtunnel.me';
+    var socket = io.connect(domain + '/api');
 
     $("#create-room").click(function() {
         console.log("hi");
         var room_number;
         var nickname = $('#nickname').val();
+        if (nickname == '') return;
         console.log('hi1');
 
         console.log('hi2');
-        $.post('http://techatin.pythonanywhere.com/api/create_room', function(data) {
+        $.post(domain + '/api/create_room', function(data) {
             var json = JSON.parse(data);
             console.log("Room number is: " + json['room_number'].toString());
             alert("Room number is: " + json['room_number'].toString());
             room_number = json['room_number'];
             socket.emit('join', {"room" : room_number, "username" : nickname}, function() {
                 $(document).empty();
-                $.get('http://techatin.pythonanywhere.com/chat', function(data) {
+                $.get(domain + '/chat', function(data) {
                     console.log(data);
                     $('body').html(data);
                     initWebcam();
@@ -55,6 +58,7 @@ $(document).ready(function() {
     $("#enter-room").on("click", function() {
         var room_number = parseInt($("#enter-room-number").val());
         var nickname = $("#nickname").val();
+        if (nickname == '') return;
 
         $('#test').append($('<form/>').attr({
             id: 'hidden_form',
@@ -64,7 +68,7 @@ $(document).ready(function() {
         console.log('hi');
         socket.emit('join', {"room" : room_number, "username" : nickname}, function() {
             $(document).empty();
-            $.get('http://techatin.pythonanywhere.com/chat', function(data) {
+            $.get(domain + '/chat', function(data) {
                 console.log(data);
                 $('body').html(data);
                 initWebcam();
@@ -106,7 +110,6 @@ $(document).ready(function() {
 	// Server returns this user's username
 	socket.on('answer_username', function(msg) {
 		this_user = msg.username;
-		alert(this_user);
 		socket.emit('user_ready');
 	});
 
@@ -131,7 +134,6 @@ $(document).ready(function() {
 	});
 
     socket.on('game_over',function(msg) {
-        alert(msg.winner);
         console.log('game_over received');
         if(msg.winner !== this_user) {
             alert('You lost.');
